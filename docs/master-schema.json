@@ -1,0 +1,18 @@
+{
+  "idea_analysis": {
+    "problem_statement": "string",
+    "target_users": ["string"],
+    "market_size": "string",
+    "competitors": [{"name": "string", "weakness": "string"}],
+    "swot": {"strengths": [], "weaknesses": [], "opportunities": [], "threats": []}
+  },
+  "mvp_plan": {
+    "core_features": ["string"],
+    "tech_stack": {"frontend": "string", "backend": "string", "database": "string"}
+  },
+  "score": {
+    "demand": 85,
+    "competition": 40,
+    "probability": 75
+  }
+}
