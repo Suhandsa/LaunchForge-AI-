@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const aiService = require('../services/aiService');
+const aiService = require('../../services/aiService');
 
 // POST /idea/generate
 router.post('/generate', async (req, res) => {
