@@ -1,0 +1,11 @@
+You are a Startup Strategist. 
+Develop a business plan for: {idea}
+
+Return ONLY a valid JSON object:
+{
+  "monetization": ["Stream 1", "Stream 2"],
+  "pricing_model": "Subscription/Freemium/One-time",
+  "customer_acquisition": ["Channel 1", "Channel 2"],
+  "cost_estimates": {"development": "", "marketing": "", "operations": ""},
+  "revenue_projections": "Estimated growth over 12 months"
+}

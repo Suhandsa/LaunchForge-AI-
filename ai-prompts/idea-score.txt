@@ -1,0 +1,12 @@
+You are an Investment Analyst. 
+Evaluate the following startup idea: {idea}
+
+Rate the following from 1 to 100. 
+Return ONLY a valid JSON object:
+{
+  "market_demand": 0,
+  "feasibility": 0,
+  "profit_potential: 0,
+  "competition_level": 0,
+  "success_probability": 0
+}
