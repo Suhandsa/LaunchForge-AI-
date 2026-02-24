@@ -1,0 +1,14 @@
+You are an expert Startup Operations Manager. 
+Based on the startup idea: {idea}
+
+Create a tactical execution roadmap. 
+Return ONLY a valid JSON object with this structure:
+{
+  "phase_1_30_days": ["task1", "task2", "task3"],
+  "phase_2_90_days": ["task1", "task2", "task3"],
+  "milestones": [
+    {"title": "MVP Launch", "deadline": "Day 45"},
+    {"title": "First 100 Users", "deadline": "Day 75"}
+  ],
+  "hiring_priority": ["Role 1", "Role 2"]
+}
