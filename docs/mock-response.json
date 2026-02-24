@@ -1,0 +1,16 @@
+{
+  "idea_id": "12345",
+  "analysis": {
+    "problem": "College students struggle to find healthy meals that fit their mess/canteen budget.",
+    "market_size": "Estimated $2B in India student hubs.",
+    "competitors": ["HealthifyMe", "MyFitnessPal"],
+    "swot": {
+      "strengths": ["Niche focus", "Hyper-local"],
+      "opportunities": ["College tie-ups"]
+    }
+  },
+  "roadmap": [
+    {"day": 7, "task": "Design basic UI flow"},
+    {"day": 30, "task": "Beta launch in 1 college"}
+  ]
+}
