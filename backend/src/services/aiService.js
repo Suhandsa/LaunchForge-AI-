@@ -40,6 +40,22 @@ class AIService {
         const rawJson = await this.callDigitalOceanAI(prompt);
         return JSON.parse(rawJson);
     }
+    /**
+     * Feature F: Idea Scoring Algorithm
+     * Takes raw scores from AI and calculates a weighted success probability.
+     */
+    calculateFinalScore(aiScores) {
+        // weights: Market 40%, Feasibility 40%, Profit 20%
+        const { market_demand, feasibility, profit_potential } = aiScores;
+        
+        const weightedScore = (market_demand * 0.4) + (feasibility * 0.4) + (profit_potential * 0.2);
+        
+        return {
+            overall_score: Math.round(weightedScore),
+            status: weightedScore > 75 ? "Highly Promising" : "Needs Refinement",
+            breakdown: aiScores
+        };
+    }
 }
 
 module.exports = new AIService();
