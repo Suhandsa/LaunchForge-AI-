@@ -3,11 +3,15 @@ const auth = require("../middleware/authMiddleware");
 const {
   generateIdea,
   getIdeaById,
-  getIdeaHistory
+  getIdeaHistory,
+  getAllIdeas,
+  deleteIdea
 } = require("../controllers/ideaController");
 
 router.post("/generate", auth, generateIdea);
+router.get("/", auth, getAllIdeas);
 router.get("/:id", auth, getIdeaById);
 router.get("/:id/history", auth, getIdeaHistory);
+router.delete("/:id", auth, deleteIdea);
 
 module.exports = router;

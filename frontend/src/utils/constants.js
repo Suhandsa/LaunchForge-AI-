@@ -17,7 +17,7 @@ export const COLORS = {
 };
 
 // ── API ────────────────────────────────────────────────────
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 // ── Navigation ─────────────────────────────────────────────
 export const NAV_ITEMS = [
@@ -42,8 +42,8 @@ export const PITCH_LABELS = ["Problem", "Solution", "Market", "Revenue", "Compet
 
 // ── Local storage keys ─────────────────────────────────────
 export const STORAGE_KEYS = {
-  token: "sf_token",
-  user:  "sf_user",
+  token: "lf_token",
+  user:  "lf_user",
 };
 
 // ── Mock example prompts ───────────────────────────────────

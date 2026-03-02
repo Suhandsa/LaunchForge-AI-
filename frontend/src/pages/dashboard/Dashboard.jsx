@@ -1,56 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { ideaService } from "../../services/ideaService";
 import IdeaForm from "../../components/idea/IdeaForm";
 import IdeaPlanCard from "../../components/idea/IdeaPlanCard";
 import ScoreChart from "../../components/charts/ScoreChart";
 import RoadmapTimeline from "../../components/roadmap/RoadmapTimeline";
 import CompetitorList from "../../components/competitors/CompetitorList";
-
-// ── Mock data (replace with ideaService.generate()) ───────
-const MOCK_PLAN = {
-  problem:     "Students lack personalized, affordable fitness guidance that adapts to academic schedules and dorm/campus environments.",
-  targetUsers: "College students aged 18–26 with irregular schedules, limited budgets, and no gym experience.",
-  uniqueValue: "AI coach that learns your class schedule, dining hall menus, and campus gym hours to build hyper-personalised 15-min workouts.",
-  market:      "$96B global fitness app market. 20M US college students — less than 8% use dedicated fitness apps consistently.",
-};
-
-const MOCK_ROADMAP = [
-  { week: "Week 1–2", title: "Foundation",     tasks: ["User research & validation", "Tech stack setup", "Auth & onboarding flow"],       status: "done"     },
-  { week: "Week 3–4", title: "Core AI Engine", tasks: ["GPT-4 integration", "Schedule parsing algorithm", "Workout generation API"],       status: "done"     },
-  { week: "Week 5–6", title: "MVP Build",      tasks: ["Mobile-first UI", "Workout tracker", "Push notifications"],                        status: "active"   },
-  { week: "Week 7–8", title: "Launch",          tasks: ["Beta with 50 students", "Iterate on feedback", "App store submission"],           status: "upcoming" },
-];
-
-const MOCK_COMPETITORS = [
-  { name: "MyFitnessPal", logo: "MF", color: "#22c55e", pricing: "$19.99/mo", strengths: ["Huge food database", "Brand recognition", "Social features"], weaknesses: ["Generic plans", "Not student-focused", "Complex UI"], score: 72 },
-  { name: "Nike Training", logo: "NT", color: "#f97316", pricing: "Free",      strengths: ["High quality videos", "Brand trust", "No paywall"],            weaknesses: ["No personalisation", "No schedule sync", "No campus data"], score: 65 },
-  { name: "Fitbod",        logo: "FB", color: "#8b5cf6", pricing: "$12.99/mo", strengths: ["Smart AI sets", "Clean design", "Equipment-aware"],             weaknesses: ["Gym-only focus", "Expensive for students", "No meal planning"], score: 68 },
-  { name: "StrideFit AI",  logo: "SF", color: "#6366F1", pricing: "$4.99/mo",  strengths: ["Student pricing", "Campus-aware", "AI-native"],                  weaknesses: ["Early stage", "Small user base", "Limited content"], score: 91 },
-];
-
-const STATS = [
-  { label: "Ideas Generated",    value: "12",   change: "+3 this week", color: "#6366F1" },
-  { label: "Avg Viability Score",value: "78",   change: "+5 pts",       color: "#22D3EE" },
-  { label: "Pitch Decks",        value: "4",    change: "2 exported",   color: "#10B981" },
-  { label: "AI Tokens Used",     value: "148K", change: "52K remaining",color: "#F59E0B" },
-];
-// ──────────────────────────────────────────────────────────
+import Loader from "../../components/common/Loader";
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [loading,   setLoading]   = useState(false);
-  const [generated, setGenerated] = useState(true);   // true = show mock data
+  const [loading, setLoading] = useState(false);
+  const [generated, setGenerated] = useState(false);
+  const [plan, setPlan] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleGenerate = async (prompt) => {
     setLoading(true);
-    setGenerated(false);
-    // Replace with: const result = await ideaService.generate({ prompt });
-    await new Promise((r) => setTimeout(r, 2200));
-    setLoading(false);
-    setGenerated(true);
+    setError(null);
+    try {
+      const result = await ideaService.generate({ idea: prompt });
+      setPlan(result.generated_plan);
+      setGenerated(true);
+    } catch (err) {
+      setError(err?.error || "Failed to generate plan");
+      setGenerated(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const firstName = user?.name?.split(" ")[0] || "Jordan";
+  const firstName = user?.name?.split(" ")[0] || "Founder";
+
+  const STATS = [
+    { label: "Ideas Generated", value: "—", change: "Check your ideas", color: "#6366F1" },
+    { label: "Avg Viability Score", value: "—", change: "Analyze ideas", color: "#22D3EE" },
+    { label: "Pitch Decks", value: "—", change: "Ready to export", color: "#10B981" },
+    { label: "AI Chats", value: "—", change: "Use AI co-founder", color: "#F59E0B" },
+  ];
 
   return (
     <div>
@@ -81,17 +68,40 @@ export default function Dashboard() {
       {/* Idea input */}
       <IdeaForm onGenerate={handleGenerate} loading={loading} />
 
+      {/* Error message */}
+      {error && (
+        <div className="mt-5 glass-card p-4 border-l-4 border-red-500">
+          <p className="text-red-400 text-[14px]">{error}</p>
+        </div>
+      )}
+
       {/* Generated content */}
-      {generated && (
+      {loading && <Loader type="block" text="Generating your startup plan..." />}
+
+      {generated && plan && (
         <div className="mt-5 space-y-5 animate-fade-up">
-          <IdeaPlanCard plan={MOCK_PLAN} />
+          <IdeaPlanCard plan={plan} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <ScoreChart scores={[88, 72, 85, 60, 80]} />
-            <RoadmapTimeline items={MOCK_ROADMAP} />
+            {plan.idea_score && (
+              <ScoreChart scores={[
+                plan.idea_score.market || 0,
+                plan.idea_score.profit || 0,
+                plan.idea_score.difficulty || 0,
+                plan.idea_score.success_probability || 0
+              ]} />
+            )}
+            {plan.roadmap_30_days && (
+              <RoadmapTimeline items={[
+                { week: "Week 1-2", title: "MVP Foundation", tasks: plan.roadmap_30_days.slice(0, 2), status: "active" },
+                { week: "Week 3-4", title: "Build & Launch", tasks: plan.roadmap_30_days.slice(2), status: "upcoming" }
+              ]} />
+            )}
           </div>
 
-          <CompetitorList competitors={MOCK_COMPETITORS} />
+          {plan.competitors && (
+            <CompetitorList competitors={plan.competitors.slice(0, 4)} />
+          )}
         </div>
       )}
     </div>

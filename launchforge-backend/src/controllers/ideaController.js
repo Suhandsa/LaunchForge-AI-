@@ -86,3 +86,34 @@ exports.getIdeaHistory = async (req, res) => {
     res.status(500).json({ error: "History fetch failed" });
   }
 };
+
+exports.getAllIdeas = async (req, res) => {
+  try {
+    const ideas = await pool.query(
+      "SELECT id, idea_text, created_at FROM ideas WHERE user_id=$1 ORDER BY created_at DESC",
+      [req.user.id]
+    );
+
+    res.json(ideas.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Fetch ideas failed" });
+  }
+};
+
+exports.deleteIdea = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "DELETE FROM ideas WHERE id=$1 AND user_id=$2 RETURNING id",
+      [req.params.id, req.user.id]
+    );
+
+    if (!result.rows.length)
+      return res.status(404).json({ error: "Idea not found" });
+
+    res.json({ message: "Idea deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Delete failed" });
+  }
+};
