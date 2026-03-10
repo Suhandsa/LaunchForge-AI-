@@ -2,26 +2,32 @@ import api from "./api";
 
 export const chatService = {
   /**
-   * POST /chat/message
-   * @param {{ ideaId: string, message: string, history: Array }} payload
+   * POST /api/chat
+   * Send message to AI co-founder
    */
-  async sendMessage(payload) {
-    const { data } = await api.post("/chat/message", payload);
-    return data; // { reply: string }
+  async sendMessage(ideaId, message) {
+    const { data } = await api.post("/chat", {
+      idea_id: ideaId,
+      message
+    });
+    return data;
   },
 
   /**
-   * GET /chat/history/:ideaId
+   * GET /api/chat/:ideaId
+   * Get chat history for an idea
    */
-  async getHistory(ideaId) {
-    const { data } = await api.get(`/chat/history/${ideaId}`);
-    return data; // Message[]
+  async getChatHistory(ideaId) {
+    const { data } = await api.get(`/chat/${ideaId}`);
+    return data;
   },
 
   /**
-   * DELETE /chat/history/:ideaId
+   * DELETE /api/chat/:ideaId
+   * Clear chat history
    */
-  async clearHistory(ideaId) {
-    await api.delete(`/chat/history/${ideaId}`);
-  },
+  async clearChatHistory(ideaId) {
+    const { data } = await api.delete(`/chat/${ideaId}`);
+    return data;
+  }
 };

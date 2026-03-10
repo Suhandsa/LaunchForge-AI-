@@ -118,7 +118,7 @@ Analyze the following idea and return ONLY valid JSON (no other text) with these
 Idea: "${text}"`;
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent(buildPrompt(idea));
     const response = await result.response;
     const text = response.text();
@@ -165,13 +165,21 @@ Respond helpfully and concisely (2-3 sentences) to the user's question:
 Do not return JSON, just provide a helpful response.`;
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    console.log("🔄 Calling Gemini API for chat...", { apiKeySet: !!process.env.GEMINI_API_KEY });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent(chatPrompt);
     const response = await result.response;
     const text = response.text();
+    console.log("✅ Chat response received:", text.substring(0, 50) + "...");
     return text.trim();
   } catch (err) {
-    console.error("Chat AI ERROR:", err.message);
+    console.error("❌ Chat AI ERROR:", {
+      message: err.message,
+      name: err.name,
+      code: err.code,
+      status: err.status,
+      fullError: err.toString()
+    });
     return "I'm experiencing technical difficulties. Please try again in a moment.";
   }
 };

@@ -3,12 +3,14 @@
  * Add new providers here (e.g. ThemeProvider, QueryClientProvider).
  */
 import { AuthProvider } from "../../context/AuthContext";
+import { IdeaProvider } from "../../context/IdeaContext";
 
 export default function Providers({ children }) {
   return (
     <AuthProvider>
-      {/* Add future providers here */}
-      {children}
+      <IdeaProvider>
+        {children}
+      </IdeaProvider>
     </AuthProvider>
   );
 }

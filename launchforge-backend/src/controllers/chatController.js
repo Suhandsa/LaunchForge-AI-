@@ -5,6 +5,7 @@ const ai = require("../services/aiService");
 exports.chat = async (req, res) => {
   try {
     const { idea_id, message } = req.body;
+    console.log("📨 Chat request received:", { idea_id, message: message.substring(0, 30) + "..." });
 
     // Verify idea exists and belongs to user
     const idea = await pool.query(
@@ -12,13 +13,17 @@ exports.chat = async (req, res) => {
       [idea_id, req.user.id]
     );
 
-    if (!idea.rows.length)
+    if (!idea.rows.length) {
+      console.log("❌ Idea not found:", idea_id);
       return res.status(404).json({ error: "Idea not found" });
+    }
 
     // Generate AI response with context of the startup idea
     const ideaPlan = idea.rows[0].generated_plan;
+    console.log("📋 Idea plan retrieved:", { problem: ideaPlan?.problem?.substring(0, 30) });
     
-const response = await ai.chatWithCofounder(ideaPlan, message);
+    const response = await ai.chatWithCofounder(ideaPlan, message);
+    console.log("✅ AI response generated successfully");
 
     // Store in database
     const chatId = uuidv4();
@@ -27,13 +32,18 @@ const response = await ai.chatWithCofounder(ideaPlan, message);
       [chatId, idea_id, req.user.id, message, response]
     );
 
+    console.log("💾 Chat saved to database:", chatId);
     res.json({ 
       id: chatId,
       message,
       response 
     });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Chat endpoint error:", {
+      message: err.message,
+      stack: err.stack,
+      name: err.name
+    });
     res.status(500).json({ error: "Chat failed" });
   }
 };

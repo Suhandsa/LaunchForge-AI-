@@ -1,38 +1,110 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Star, Download } from "lucide-react";
 import IdeaPlanCard from "../../components/idea/IdeaPlanCard";
 import ScoreChart from "../../components/charts/ScoreChart";
 import RoadmapTimeline from "../../components/roadmap/RoadmapTimeline";
 import CompetitorList from "../../components/competitors/CompetitorList";
 import Button from "../../components/common/Button";
-
-// Mock — replace with useFetch(() => ideaService.getById(id), [id])
-const MOCK = {
-  id: "1",
-  prompt: "AI fitness app for students",
-  createdAt: new Date().toISOString(),
-  plan: {
-    problem:     "Students lack personalised fitness guidance that fits campus life.",
-    targetUsers: "College students aged 18–26.",
-    uniqueValue: "AI coach that syncs with your class schedule and campus gym.",
-    market:      "$96B global fitness market, 20M US college students.",
-  },
-  scores: [88, 72, 85, 60, 80],
-  roadmap: [
-    { week: "Week 1–2", title: "Foundation",      tasks: ["Research", "Stack setup"],  status: "done"     },
-    { week: "Week 3–4", title: "Core AI Engine",  tasks: ["GPT-4 integration"],        status: "active"   },
-    { week: "Week 5–6", title: "MVP",              tasks: ["UI", "Tracker"],            status: "upcoming" },
-  ],
-  competitors: [
-    { name: "MyFitnessPal", logo: "MF", color: "#22c55e", pricing: "$19.99/mo", strengths: ["Database", "Brand"], weaknesses: ["Generic"], score: 72 },
-    { name: "Fitbod",       logo: "FB", color: "#8b5cf6", pricing: "$12.99/mo", strengths: ["AI sets"],           weaknesses: ["Gym only"], score: 68 },
-  ],
-};
+import Loader from "../../components/common/Loader";
+import { ideaService } from "../../services/ideaService";
+import { useIdea } from "../../hooks/useIdea";
 
 export default function IdeaDetails() {
-  const { id }    = useParams();
-  const navigate  = useNavigate();
-  const idea      = MOCK; // ideaService.getById(id)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { setIdea } = useIdea();
+  const [idea, setLocalIdea] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!id) {
+      setError("No idea ID provided");
+      setLoading(false);
+      return;
+    }
+
+    loadIdea();
+  }, [id]);
+
+  const loadIdea = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await ideaService.getIdeaById(id);
+      
+      // Transform the backend data to frontend format
+      const plan = data.generated_plan || {};
+      const transformedIdea = {
+        id: data.id,
+        prompt: data.idea_text,
+        createdAt: data.created_at,
+        plan: {
+          problem: plan.problem || "Problem not defined",
+          targetUsers: Array.isArray(plan.target_users) ? plan.target_users.join(", ") : plan.target_users || "Not specified",
+          uniqueValue: plan.usp || "Unique value proposition not defined",
+          market: plan.market_size || "Market size not estimated",
+        },
+        scores: [
+          plan.idea_score?.market || 0,
+          plan.idea_score?.profit || 0,
+          plan.idea_score?.difficulty || 0,
+          plan.idea_score?.success_probability || 0,
+        ],
+        roadmap: [
+          { 
+            week: "30 Days", 
+            title: "MVP Phase", 
+            tasks: Array.isArray(plan.roadmap_30_days) ? plan.roadmap_30_days : [], 
+            status: "active" 
+          },
+          { 
+            week: "90 Days", 
+            title: "Growth Phase", 
+            tasks: Array.isArray(plan.roadmap_90_days) ? plan.roadmap_90_days : [], 
+            status: "upcoming" 
+          },
+        ],
+        competitors: Array.isArray(plan.competitors) ? plan.competitors : [],
+      };
+      
+      setLocalIdea(transformedIdea);
+      // Set the current idea in global context
+      setIdea(transformedIdea);
+    } catch (err) {
+      console.error("Failed to load idea:", err);
+      setError(err?.error || err?.message || "Failed to load idea");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <Loader type="spinner" text="Loading idea details..." />;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-400 mb-4">⚠️ {error}</p>
+        <Button variant="primary" onClick={() => navigate("/")}>
+          Back to Dashboard
+        </Button>
+      </div>
+    );
+  }
+
+  if (!idea) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-[var(--muted)] mb-4">Idea not found</p>
+        <Button variant="primary" onClick={() => navigate("/")}>
+          Back to Dashboard
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div>

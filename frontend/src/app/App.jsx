@@ -2,6 +2,7 @@ import { useRoutes } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { buildRoutes } from "./routes";
 import Loader from "../components/common/Loader";
+import { IdeaProvider } from "../context/IdeaContext";
 
 export default function App() {
   const { isAuth, loading } = useAuth();
@@ -11,5 +12,10 @@ export default function App() {
 
   const routes = buildRoutes(isAuth);
   const element = useRoutes(routes);
-  return element;
+
+  return (
+    <IdeaProvider>
+      {element}
+    </IdeaProvider>
+  );
 }
