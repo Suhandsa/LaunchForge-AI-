@@ -10,7 +10,7 @@ const SECTIONS = [
     border:"rgba(239,68,68,0.15)",
   },
   {
-    key:   "targetUsers",
+    key:   "target_users",
     icon:  Users,
     label: "Target Users",
     color: "#22D3EE",
@@ -18,7 +18,7 @@ const SECTIONS = [
     border:"rgba(34,211,238,0.15)",
   },
   {
-    key:   "uniqueValue",
+    key:   "usp",
     icon:  Star,
     label: "Unique Value",
     color: "#F59E0B",
@@ -26,7 +26,7 @@ const SECTIONS = [
     border:"rgba(245,158,11,0.15)",
   },
   {
-    key:   "market",
+    key:   "market_size",
     icon:  TrendingUp,
     label: "Market Size",
     color: "#10B981",
@@ -76,7 +76,7 @@ export default function IdeaPlanCard({ plan }) {
               </span>
             </div>
             <p className="text-[13px] text-[var(--text)] leading-relaxed">
-              {plan?.[key] || "—"}
+              {Array.isArray(plan?.[key]) ? plan[key].join(", ") : (plan?.[key] || "—")}
             </p>
           </div>
         ))}

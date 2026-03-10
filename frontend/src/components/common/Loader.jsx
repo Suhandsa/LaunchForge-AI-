@@ -17,6 +17,20 @@ export default function Loader({ type = "inline", text = "Loading…" }) {
     );
   }
 
+  if (type === "block") {
+    return (
+      <div className="glass-card p-8 mt-5 flex flex-col items-center justify-center">
+        <div className="relative mb-4">
+          <div className="w-10 h-10 border-2 border-white/10 border-t-[var(--primary)] rounded-full animate-spin-fast" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-3 h-3 rounded-full bg-[var(--primary)] opacity-60 animate-pulse" />
+          </div>
+        </div>
+        <p className="text-sm text-[var(--muted)] text-center">{text}</p>
+      </div>
+    );
+  }
+
   if (type === "dots") {
     return (
       <div className="flex items-center gap-1.5 py-2">

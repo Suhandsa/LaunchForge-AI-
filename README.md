@@ -1,1 +1,1 @@
-# LaunchForge-AI-
+# LaunchGen AI - Idea to Startup Execution Platform

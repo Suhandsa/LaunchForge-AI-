@@ -1,8 +1,8 @@
-# LaunchForge AI - Complete Setup & Run Guide
+# LaunchGen AI - Complete Setup & Run Guide
 
 ## 🎯 Project Overview
 
-LaunchForge AI is an AI-powered platform that converts a raw startup idea into a complete execution roadmap. Users enter an idea and the system generates:
+LaunchGen AI is an AI-powered platform that converts a raw startup idea into a complete execution roadmap. Users enter an idea and the system generates:
 
 - Problem validation
 - Market research
@@ -97,12 +97,12 @@ This will:
 
 2. **Create the database**:
 ```bash
-createdb launchforge_db
+createdb launchgen
 ```
 
 3. **Initialize the schema**:
 ```bash
-psql -U postgres launchforge_db < launchforge-backend/docs/init-db.sql
+psql -U postgres launchgen < launchforge-backend/docs/init-db.sql
 ```
 
 ### Step 3: Configure Environment Variables
@@ -114,7 +114,7 @@ DB_USER=postgres
 DB_PASSWORD=postgres
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=launchforge_db
+DB_NAME=launchgen
 
 # Server
 PORT=5000
@@ -135,7 +135,7 @@ FRONTEND_URL=http://localhost:5173
 **Frontend** (`frontend/.env`):
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
-VITE_APP_NAME=LaunchForge AI
+VITE_APP_NAME=LaunchGen AI
 ```
 
 ### Step 4: Run the Application
@@ -357,7 +357,7 @@ See `launchforge-backend/docs/init-db.sql` for complete schema.
 | DB_PASSWORD | postgres | Database password |
 | DB_HOST | localhost | Database host |
 | DB_PORT | 5432 | Database port |
-| DB_NAME | launchforge_db | Database name |
+| DB_NAME | launchgen | Database name |
 | JWT_SECRET | - | JWT signing key |
 | AI_MODE | mock | AI mode (mock/real) |
 | AI_API_KEY | - | OpenAI API key |

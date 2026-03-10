@@ -2,44 +2,44 @@ import api from "./api";
 
 export const ideaService = {
   /**
-   * POST /ideas/generate
+   * POST /idea/generate
    * Sends a prompt and receives the full AI-generated plan.
-   * @param {{ prompt: string }} payload
+   * @param {{ idea: string }} payload
    */
-  async generate(payload) {
-    const { data } = await api.post("/ideas/generate", payload);
-    return data; // { plan, scores, roadmap, competitors, pitchDeck }
+  async generateIdea(payload) {
+    const { data } = await api.post("/idea/generate", payload);
+    return data; // { idea_id, version, generated_plan }
   },
 
   /**
-   * GET /ideas
+   * GET /idea
    * Fetch all ideas for the current user.
    */
-  async getAll() {
-    const { data } = await api.get("/ideas");
+  async getAllIdeas() {
+    const { data } = await api.get("/idea");
     return data; // Idea[]
   },
 
   /**
-   * GET /ideas/:id
+   * GET /idea/:id
    */
-  async getById(id) {
-    const { data } = await api.get(`/ideas/${id}`);
+  async getIdeaById(id) {
+    const { data } = await api.get(`/idea/${id}`);
     return data;
   },
 
   /**
-   * DELETE /ideas/:id
+   * DELETE /idea/:id
    */
-  async remove(id) {
-    await api.delete(`/ideas/${id}`);
+  async deleteIdea(id) {
+    await api.delete(`/idea/${id}`);
   },
 
   /**
-   * PATCH /ideas/:id/favourite
+   * PATCH /idea/:id/favourite
    */
   async toggleFavourite(id) {
-    const { data } = await api.patch(`/ideas/${id}/favourite`);
+    const { data } = await api.patch(`/idea/${id}/favourite`);
     return data;
   },
 };

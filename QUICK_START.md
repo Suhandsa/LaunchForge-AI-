@@ -73,7 +73,7 @@ FRONTEND_URL=http://localhost:5173
 **Frontend** (`frontend/.env`):
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
-VITE_APP_NAME=LaunchForge AI
+VITE_APP_NAME=LaunchGen AI
 ```
 
 ## ▶️ Step 4: Run the Application

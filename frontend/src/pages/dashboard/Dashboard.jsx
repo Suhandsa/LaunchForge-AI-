@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { ideaService } from "../../services/ideaService";
+import { ErrorBoundary } from "../../components/common/ErrorBoundary";
 import IdeaForm from "../../components/idea/IdeaForm";
 import IdeaPlanCard from "../../components/idea/IdeaPlanCard";
+import SWOTAnalysis from "../../components/idea/SWOTAnalysis";
+import BusinessPlanCard from "../../components/idea/BusinessPlanCard";
+import RisksCard from "../../components/idea/RisksCard";
+import ExecutionRoadmap from "../../components/idea/ExecutionRoadmap";
+import MVPFeaturesCard from "../../components/idea/MVPFeaturesCard";
+import TechStackCard from "../../components/idea/TechStackCard";
+import ExportButton from "../../components/idea/ExportButton";
 import ScoreChart from "../../components/charts/ScoreChart";
 import RoadmapTimeline from "../../components/roadmap/RoadmapTimeline";
 import CompetitorList from "../../components/competitors/CompetitorList";
@@ -11,20 +19,38 @@ import Loader from "../../components/common/Loader";
 export default function Dashboard() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [plan, setPlan] = useState(null);
+  const [ideaId, setIdeaId] = useState(null);
   const [error, setError] = useState(null);
+  const [renderError, setRenderError] = useState(null);
 
   const handleGenerate = async (prompt) => {
     setLoading(true);
     setError(null);
+    setRenderError(null);
+    setGenerated(false);
+    setPlan(null);
+    
     try {
-      const result = await ideaService.generate({ idea: prompt });
+      const result = await ideaService.generateIdea({ idea: prompt });
+      console.log("✅ API Response:", result);
+      console.log("✅ Generated Plan key names:", Object.keys(result.generated_plan || {}));
+      
+      if (!result.generated_plan) {
+        throw new Error("No plan data in response");
+      }
+      
       setPlan(result.generated_plan);
+      setIdeaId(result.idea_id);
       setGenerated(true);
     } catch (err) {
-      setError(err?.error || "Failed to generate plan");
+      console.error("❌ Generation Error:", err);
+      const errorMsg = err?.error || err?.message || "Failed to generate plan";
+      setError(errorMsg);
       setGenerated(false);
+      setPlan(null);
     } finally {
       setLoading(false);
     }
@@ -34,7 +60,7 @@ export default function Dashboard() {
 
   const STATS = [
     { label: "Ideas Generated", value: "—", change: "Check your ideas", color: "#6366F1" },
-    { label: "Avg Viability Score", value: "—", change: "Analyze ideas", color: "#22D3EE" },
+                { label: "Avg Score", value: "—", change: "Based on ideas", color: "#22D3EE" },
     { label: "Pitch Decks", value: "—", change: "Ready to export", color: "#10B981" },
     { label: "AI Chats", value: "—", change: "Use AI co-founder", color: "#F59E0B" },
   ];
@@ -78,11 +104,30 @@ export default function Dashboard() {
       {/* Generated content */}
       {loading && <Loader type="block" text="Generating your startup plan..." />}
 
-      {generated && plan && (
-        <div className="mt-5 space-y-5 animate-fade-up">
-          <IdeaPlanCard plan={plan} />
+      {renderError && (
+        <div className="mt-5 glass-card p-4 border-l-4 border-orange-500">
+          <p className="text-orange-400 text-[14px]">{renderError}</p>
+        </div>
+      )}
 
+      <ErrorBoundary>
+        {generated && plan && (
+          <div className="mt-5 space-y-5 animate-fade-up">
+            {/* Overview */}
+            <div className="flex items-start gap-4">
+              <div className="flex-1">
+                <IdeaPlanCard plan={plan} />
+              </div>
+            {ideaId && (
+              <ExportButton ideaId={ideaId} loading={exporting} />
+            )}
+          </div>
+
+          {/* Problem Statement & USP */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {plan.usp && (
+              <RisksCard risks={plan.risks || []} usp={plan.usp} />
+            )}
             {plan.idea_score && (
               <ScoreChart scores={[
                 plan.idea_score.market || 0,
@@ -91,19 +136,43 @@ export default function Dashboard() {
                 plan.idea_score.success_probability || 0
               ]} />
             )}
-            {plan.roadmap_30_days && (
-              <RoadmapTimeline items={[
-                { week: "Week 1-2", title: "MVP Foundation", tasks: plan.roadmap_30_days.slice(0, 2), status: "active" },
-                { week: "Week 3-4", title: "Build & Launch", tasks: plan.roadmap_30_days.slice(2), status: "upcoming" }
-              ]} />
+          </div>
+
+          {/* Business & MVP */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {plan.business_plan && (
+              <BusinessPlanCard businessPlan={plan.business_plan} />
+            )}
+            {plan.mvp_features && (
+              <MVPFeaturesCard mvpFeatures={plan.mvp_features} />
             )}
           </div>
 
+          {/* SWOT & Tech Stack */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {plan.swot && (
+              <SWOTAnalysis swot={plan.swot} />
+            )}
+            {plan.tech_stack && (
+              <TechStackCard techStack={plan.tech_stack} />
+            )}
+          </div>
+
+          {/* Execution Roadmap */}
+          {(plan.roadmap_30_days || plan.roadmap_90_days) && (
+            <ExecutionRoadmap 
+              roadmap30={plan.roadmap_30_days || []}
+              roadmap90={plan.roadmap_90_days || []}
+            />
+          )}
+
+          {/* Competitors */}
           {plan.competitors && (
             <CompetitorList competitors={plan.competitors.slice(0, 4)} />
           )}
         </div>
-      )}
+        )}
+      </ErrorBoundary>
     </div>
   );
 }

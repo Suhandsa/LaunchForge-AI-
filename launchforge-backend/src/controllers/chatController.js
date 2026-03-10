@@ -17,9 +17,8 @@ exports.chat = async (req, res) => {
 
     // Generate AI response with context of the startup idea
     const ideaPlan = idea.rows[0].generated_plan;
-    const context = `This is an AI startup advisor. The user is working on an idea with the following plan: ${JSON.stringify(ideaPlan)}.\n\nUser question: ${message}`;
     
-    const response = await generateChatResponse(context);
+const response = await ai.chatWithCofounder(ideaPlan, message);
 
     // Store in database
     const chatId = uuidv4();

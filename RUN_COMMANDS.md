@@ -165,7 +165,7 @@ These should already be set up from setup.bat/setup.sh, but verify:
 DB_USER=postgres
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=launchforge_db
+DB_NAME=launchgen
 DB_PASSWORD=postgres
 PORT=5000
 NODE_ENV=development
@@ -179,7 +179,7 @@ FRONTEND_URL=http://localhost:5173
 **Frontend** (`frontend/.env`)
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
-VITE_APP_NAME=LaunchForge AI
+VITE_APP_NAME=LaunchGen AI
 ```
 
 ### STEP 5: Start the Application

@@ -1,4 +1,4 @@
-# 🚀 LaunchForge AI – Backend API Documentation
+# 🚀 LaunchGen AI – Backend API Documentation
 
 Base URL:
 http://localhost:5000
@@ -76,11 +76,20 @@ Response:
 "mvp_features": ["..."],
 "tech_stack": ["..."],
 "roadmap_30_days": ["..."],
+"swot": { /* strengths, weaknesses, opportunities, threats */ },
+"risks": ["..."],
+"usp": "Unique selling point",
+"mvp_features": ["..."],
+"tech_stack": ["..."],
+"business_plan": { /* monetization, pricing, acquisition */ },
+"roadmap_30_days": ["..."],
+"roadmap_90_days": ["..."],
+"pitch_summary": { /* slide summaries */ },
 "idea_score": {
-"market": 7,
-"profit": 8,
-"difficulty": 6,
-"success_probability": 7
+  "market": 7,
+  "profit": 8,
+  "difficulty": 6,
+  "success_probability": 7
 }
 }
 }

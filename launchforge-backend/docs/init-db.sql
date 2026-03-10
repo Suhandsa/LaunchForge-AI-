@@ -1,4 +1,4 @@
--- LaunchForge AI Database Schema
+-- LaunchGen AI Database Schema
 -- PostgreSQL 12+
 
 -- Create UUID extension

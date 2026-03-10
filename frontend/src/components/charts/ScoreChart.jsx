@@ -19,13 +19,14 @@ const METRICS = ["Market Demand", "Competition", "Profit Potential", "Difficulty
  * @param {number[]} scores  — array of 5 values (0–100)
  */
 export default function ScoreChart({ scores = [88, 72, 85, 60, 80] }) {
-  const overall = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  const safeScores = Array.isArray(scores) && scores.length > 0 ? scores : [0, 0, 0, 0, 0];
+  const overall = Math.round(safeScores.reduce((a, b) => a + b, 0) / safeScores.length);
 
   const chartData = {
     labels: METRICS,
     datasets: [
       {
-        data: scores,
+        data: safeScores,
         backgroundColor: "rgba(99,102,241,0.15)",
         borderColor: "rgba(99,102,241,0.85)",
         borderWidth: 2,
@@ -69,9 +70,9 @@ export default function ScoreChart({ scores = [88, 72, 85, 60, 80] }) {
   };
 
   const highlights = [
-    { label: "Market",  val: scores[0], c: "#6366F1" },
-    { label: "Profit",  val: scores[2], c: "#22D3EE" },
-    { label: "Success", val: scores[4], c: "#10B981" },
+    { label: "Market",  val: safeScores[0] || 0, c: "#6366F1" },
+    { label: "Profit",  val: safeScores[2] || 0, c: "#22D3EE" },
+    { label: "Success", val: safeScores[4] || 0, c: "#10B981" },
   ];
 
   return (

@@ -54,7 +54,7 @@ export default function CompetitorCard({ competitor: c }) {
           <p className="text-[10px] font-semibold text-[var(--success)] uppercase tracking-widest mb-2">
             Strengths
           </p>
-          {c.strengths.map((s) => (
+          {Array.isArray(c?.strengths) && c.strengths.map((s) => (
             <div key={s} className="flex items-start gap-1 mb-1">
               <span className="text-[var(--success)] text-sm leading-none mt-0.5">+</span>
               <span className="text-[11px] text-[var(--text)] leading-snug">{s}</span>
@@ -65,7 +65,7 @@ export default function CompetitorCard({ competitor: c }) {
           <p className="text-[10px] font-semibold text-[#EF4444] uppercase tracking-widest mb-2">
             Weaknesses
           </p>
-          {c.weaknesses.map((w) => (
+          {Array.isArray(c?.weaknesses) && c.weaknesses.map((w) => (
             <div key={w} className="flex items-start gap-1 mb-1">
               <span className="text-[#EF4444] text-sm leading-none mt-0.5">−</span>
               <span className="text-[11px] text-[var(--text)] leading-snug">{w}</span>

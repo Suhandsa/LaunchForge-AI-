@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# LaunchForge AI - Complete Setup Script
+# LaunchGen AI - Complete Setup Script
 # This script sets up the entire project (backend + frontend)
 
 echo "================================================"
-echo "🚀 LaunchForge AI - Project Setup"
+echo "🚀 LaunchGen AI - Project Setup"
 echo "================================================"
 
 # Colors for output
@@ -70,8 +70,8 @@ echo -e "${GREEN}================================================${NC}\n"
 
 echo "📋 Next Steps:"
 echo "  1. Make sure PostgreSQL is running on your system"
-echo "  2. Create database: createdb launchforge_db"
-echo "  3. Initialize schema: psql launchforge_db < launchforge-backend/docs/init-db.sql"
+echo "  2. Create database: createdb launchgen"
+echo "  3. Initialize schema: psql launchgen < launchforge-backend/docs/init-db.sql"
 echo "  4. Start backend: npm run dev (from launchforge-backend)"
 echo "  5. Start frontend: npm run dev (from frontend)"
 echo ""
