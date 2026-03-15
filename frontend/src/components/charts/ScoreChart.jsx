@@ -20,13 +20,14 @@ const METRICS = ["Market Demand", "Competition", "Profit Potential", "Difficulty
  */
 export default function ScoreChart({ scores = [88, 72, 85, 60, 80] }) {
   const safeScores = Array.isArray(scores) && scores.length > 0 ? scores : [0, 0, 0, 0, 0];
-  const overall = Math.round(safeScores.reduce((a, b) => a + b, 0) / safeScores.length);
+  const normalizedScores = safeScores.map(s => (s <= 10 && s > 0) ? s * 10 : s);
+  const overall = Math.round(normalizedScores.reduce((a, b) => a + b, 0) / normalizedScores.length);
 
   const chartData = {
     labels: METRICS,
     datasets: [
       {
-        data: safeScores,
+        data: normalizedScores,
         backgroundColor: "rgba(99,102,241,0.15)",
         borderColor: "rgba(99,102,241,0.85)",
         borderWidth: 2,

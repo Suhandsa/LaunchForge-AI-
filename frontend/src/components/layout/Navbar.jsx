@@ -69,7 +69,7 @@ export default function Navbar() {
             boxShadow: "0 0 14px rgba(99,102,241,0.3)",
           }}
         >
-          {initials(user?.name || "Jordan Davis")}
+          {initials(user?.name || "Founder")}
         </div>
       </div>
     </header>

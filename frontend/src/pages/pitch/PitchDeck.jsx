@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
   AlertTriangle, Zap, Globe, DollarSign,
   Shield, Rocket, ChevronLeft, ChevronRight,
-  Download, Play, Loader,
+  Download, Play, Loader, X
 } from "lucide-react";
 import Button from "../../components/common/Button";
 import { ideaService } from "../../services/ideaService";
@@ -45,6 +45,18 @@ export default function PitchDeck() {
     loadIdeas();
   }, []);
 
+  // Handle keyboard navigation in Present Mode
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!presentMode) return;
+      if (e.key === "Escape") setPresentMode(false);
+      if (e.key === "ArrowRight") setCurrent(c => Math.min(slides.length - 1, c + 1));
+      if (e.key === "ArrowLeft") setCurrent(c => Math.max(0, c - 1));
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [presentMode, slides.length]);
+
   // Generate slides when idea changes
   useEffect(() => {
     if (!selectedIdeaId) return;
@@ -57,45 +69,45 @@ export default function PitchDeck() {
         const generatedSlides = [
           {
             label: "Problem",
-            headline: plan.problem || "Problem Statement",
-            body: plan.problem ? `Our target users face this challenge: ${plan.problem}${plan.target_users ? ` The primary users are: ${plan.target_users.slice(0, 2).join(", ")}.` : ""}` : "Problem not yet analyzed",
+            headline: "The Problem",
+            body: plan.problem || "Problem not yet analyzed.",
             stat: plan.idea_score?.market || "—",
-            statLabel: "market score",
+            statLabel: "Market Score",
           },
           {
             label: "Solution",
-            headline: plan.usp || "Our Solution",
-            body: `Our unique value proposition: ${plan.usp || "Being determined"}\n\nKey MVP Features:\n• ${(plan.mvp_features || []).slice(0, 3).join("\n• ")}`,
+            headline: "Our Solution",
+            body: `Unique Value:\n${plan.usp || "Being determined"}\n\nKey MVP Features:\n• ${(plan.mvp_features || []).slice(0, 4).join("\n• ")}`,
             stat: (plan.mvp_features || []).length || "—",
-            statLabel: "MVP features",
+            statLabel: "MVP Features",
           },
           {
             label: "Market",
-            headline: plan.market_size || "Market Opportunity",
-            body: `Target Market Size: ${plan.market_size || "To be determined"}\n\nTarget Users:\n• ${(plan.target_users || []).join("\n• ")}`,
+            headline: "Target Market",
+            body: `Market Size:\n${plan.market_size || "To be determined"}\n\nTarget Users:\n• ${(plan.target_users || []).join("\n• ")}`,
             stat: plan.target_users ? plan.target_users.length : "—",
-            statLabel: "user segments",
+            statLabel: "User Segments",
           },
           {
             label: "Revenue",
-            headline: plan.business_plan?.pricing ? `${plan.business_plan.pricing}/month` : "Pricing Strategy",
-            body: `Monetization Model: ${plan.business_plan?.monetization || "Not yet defined"}\n\nPricing: ${plan.business_plan?.pricing || "To be determined"}\n\nAcquisition: ${plan.business_plan?.acquisition || "To be determined"}`,
-            stat: plan.business_plan?.pricing || "—",
-            statLabel: "pricing",
+            headline: "Business Model",
+            body: `Monetization:\n${plan.business_plan?.monetization || "Not yet defined"}\n\nPricing Strategy:\n${plan.business_plan?.pricing || "To be determined"}\n\nAcquisition:\n${plan.business_plan?.acquisition || "To be determined"}`,
+            stat: "ROI", 
+            statLabel: "Growth Potential",
           },
           {
             label: "Competition",
-            headline: `${(plan.competitors || []).length} Key Competitors`,
-            body: `Our competitive advantages:\n• ${plan.competitors?.slice(0, 2).map(c => c.name || c).join("\n• ") || "Being analyzed"}\n\nOur unique position: ${plan.usp || "Being determined"}`,
+            headline: "Competitive Edge",
+            body: `Key Competitors:\n• ${(plan.competitors || []).map(c => c.name || c).join("\n• ") || "Being analyzed"}\n\nOur Advantage:\n${plan.usp || "Being determined"}`,
             stat: (plan.competitors || []).length || "—",
-            statLabel: "competitors analyzed",
+            statLabel: "Competitors",
           },
           {
             label: "Roadmap",
-            headline: "30-90 Day Roadmap",
-            body: `30 Days:\n• ${(plan.roadmap_30_days || []).slice(0, 2).join("\n• ")}\n\n90 Days:\n• ${(plan.roadmap_90_days || []).slice(0, 2).join("\n• ")}`,
-            stat: "180",
-            statLabel: "days to scale",
+            headline: "Execution Plan",
+            body: `30-Day Sprint:\n• ${(plan.roadmap_30_days || []).slice(0, 3).join("\n• ")}\n\n90-Day Vision:\n• ${(plan.roadmap_90_days || []).slice(0, 3).join("\n• ")}`,
+            stat: "90",
+            statLabel: "Days to MVP",
           },
         ];
 
@@ -324,6 +336,77 @@ export default function PitchDeck() {
           </div>
         </div>
       </div>
+      {/* ── PRESENT MODE OVERLAY ── */}
+      {presentMode && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center animate-fade-in"
+          style={{ background: "#05070a" }}
+        >
+          {/* Close Button */}
+          <button
+            onClick={() => setPresentMode(false)}
+            className="absolute top-6 right-6 w-12 h-12 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white transition-all cursor-pointer z-50"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Big Cinematic Slide */}
+          <div className="w-full max-w-[1100px] aspect-[16/9] rounded-2xl overflow-hidden flex flex-col shadow-[0_0_80px_rgba(0,0,0,0.8)] relative"
+               style={{ background: `linear-gradient(145deg, #0f131f, #07090F)`, border: '1px solid rgba(255,255,255,0.05)' }}>
+            
+            {/* Decorative Glow Orb */}
+            <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20 pointer-events-none"
+                 style={{ background: getSlideColor(current) }} />
+
+            {/* Slide header */}
+            <div className="flex items-center gap-6 px-14 py-12 flex-shrink-0 z-10">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg"
+                   style={{ background: `linear-gradient(135deg, ${getSlideColor(current)}20, ${getSlideColor(current)}05)`, border: `1px solid ${getSlideColor(current)}30` }}>
+                <Icon size={32} color={getSlideColor(current)} />
+              </div>
+              <div>
+                <p className="text-[13px] font-bold uppercase tracking-[0.25em] mb-2"
+                   style={{ color: getSlideColor(current) }}>
+                  {slide.label} <span className="opacity-40 mx-2">|</span> Slide {current + 1}/{slides.length}
+                </p>
+                <h2 className="text-[42px] font-extrabold text-white leading-none tracking-tight">{slide.headline}</h2>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 flex gap-16 px-14 pb-14 z-10">
+              {/* Body Text */}
+              <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
+                <p className="text-[20px] text-[#D1D5DB] leading-[1.8] whitespace-pre-wrap font-light">
+                  {slide.body}
+                </p>
+              </div>
+
+              {/* Stat Box */}
+              <div className="flex-shrink-0 w-80 flex flex-col justify-center rounded-3xl p-10 relative overflow-hidden"
+                   style={{
+                     background: `linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))`,
+                     border: `1px solid rgba(255,255,255,0.05)`,
+                     boxShadow: `inset 0 0 0 1px ${getSlideColor(current)}15`
+                   }}>
+                {/* Subtle icon bg */}
+                <Icon size={140} className="absolute -right-8 -bottom-8 opacity-[0.03]" color="white" />
+                
+                <p className="text-[64px] font-black leading-none mb-3 truncate" 
+                   style={{ color: getSlideColor(current), fontFamily: "Syne, sans-serif" }}>
+                  {slide.stat}
+                </p>
+                <p className="text-[15px] text-[var(--muted)] font-semibold uppercase tracking-widest">{slide.statLabel}</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Keyboard Hint */}
+          <p className="absolute bottom-8 text-[var(--muted)] text-[13px] tracking-wide opacity-80">
+             Use <kbd className="bg-white/10 px-2 py-0.5 rounded mx-1">←</kbd> and <kbd className="bg-white/10 px-2 py-0.5 rounded mx-1">→</kbd> to navigate · Press <kbd className="bg-white/10 px-2 py-0.5 rounded mx-1">ESC</kbd> to exit
+          </p>
+        </div>
+      )}
     </div>
   );
 }

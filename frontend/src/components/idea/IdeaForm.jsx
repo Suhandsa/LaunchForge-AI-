@@ -43,7 +43,7 @@ export default function IdeaForm({ onGenerate, loading = false }) {
           className="ml-auto text-[11px] text-[var(--muted)] px-2 py-1 rounded-md"
           style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--border)" }}
         >
-          Gemini Pro
+          Gemini 2.5 Flash Active
         </span>
       </div>
 

@@ -25,7 +25,6 @@ app.use(express.json());
 app.use(logger);
 
 // rate limit all APIs (prefix with /api for consistency)
-app.use("/api/auth", apiLimiter);
 app.use("/api/idea", apiLimiter);
 app.use("/api/chat", apiLimiter);
 app.use("/api/pitch", apiLimiter);

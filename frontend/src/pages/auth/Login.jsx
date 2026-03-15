@@ -57,7 +57,7 @@ export default function Login() {
             <Brain size={28} color="white" />
           </div>
           <h1 className="text-[26px] font-extrabold text-[var(--text)] mb-1">
-            Welcome to StrideFit
+            Welcome to LaunchForge-AI
           </h1>
           <p className="text-[14px] text-[var(--muted)]">Your AI co-founder platform</p>
         </div>

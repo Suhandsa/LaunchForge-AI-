@@ -8,7 +8,7 @@ export default function App() {
   const { isAuth, loading } = useAuth();
 
   // Show fullscreen spinner while verifying token on mount
-  if (loading) return <Loader type="fullscreen" text="Starting StrideFit AI…" />;
+  if (loading) return <Loader type="fullscreen" text="Starting LaunchForge…" />;
 
   const routes = buildRoutes(isAuth);
   const element = useRoutes(routes);

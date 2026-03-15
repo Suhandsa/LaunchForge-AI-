@@ -50,7 +50,7 @@ export default function Sidebar({ collapsed, onToggle }) {
         {!collapsed && (
           <div className="overflow-hidden">
             <p className="text-[15px] font-bold leading-none text-[var(--text)]" style={{ fontFamily: "Syne, sans-serif" }}>
-              StrideFit
+              LaunchForge-AI
             </p>
             <p className="text-[10px] text-[var(--muted)] mt-0.5 tracking-widest uppercase">
               AI Platform
@@ -97,7 +97,7 @@ export default function Sidebar({ collapsed, onToggle }) {
             </div>
             <div className="overflow-hidden">
               <p className="text-[13px] font-semibold text-[var(--text)] truncate">
-                {user?.name || "Jordan Davis"}
+                {user?.name || "Founder"}
               </p>
               <p className="text-[11px] text-[var(--muted)]">Pro Plan</p>
             </div>

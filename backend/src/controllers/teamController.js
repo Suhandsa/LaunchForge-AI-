@@ -52,16 +52,31 @@ exports.inviteMember = async (req, res) => {
 exports.getTeam = async (req, res) => {
   try {
     const team = await pool.query(
-      `SELECT t.team_name, u.email, tm.role
+      `SELECT 
+         t.id, 
+         t.team_name, 
+         json_agg(
+           json_build_object(
+             'email', u.email, 
+             'role', tm.role
+           )
+         ) as members
        FROM teams t
        JOIN team_members tm ON t.id = tm.team_id
        JOIN users u ON tm.user_id = u.id
-       WHERE t.id=$1`,
+       WHERE t.id = $1
+       GROUP BY t.id, t.team_name`,
       [req.params.id]
     );
 
-    res.json(team.rows);
-  } catch {
+    if (!team.rows.length) {
+      return res.status(404).json({ error: "Team not found" });
+    }
+
+    // Return the single grouped object
+    res.json(team.rows[0]); 
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Fetch failed" });
   }
 };

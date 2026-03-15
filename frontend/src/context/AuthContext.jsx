@@ -74,6 +74,8 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error("Logout error", err);
     }
+    clearToken();
+    clearUser();
     dispatch({ type: "LOGOUT" });
   }, []);
 

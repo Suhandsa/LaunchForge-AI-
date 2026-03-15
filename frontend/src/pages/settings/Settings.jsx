@@ -72,13 +72,13 @@ export default function Settings() {
       <Section icon={SettingsIcon} title="Profile">
         <Row label="Full Name" desc="Your display name across the platform">
           <input
-            defaultValue={user?.name || "Jordan Davis"}
+            defaultValue={user?.name || "Founder"}
             className="input-field max-w-[220px]"
           />
         </Row>
         <Row label="Email" desc="Used for login and notifications">
           <input
-            defaultValue={user?.email || "jordan@stridefit.ai"}
+            defaultValue={user?.email || "founder@launchforge-ai.com"}
             className="input-field max-w-[220px]"
           />
         </Row>
@@ -91,14 +91,13 @@ export default function Settings() {
       <Section icon={Cpu} title="AI Configuration">
         <Row label="Language Model" desc="Model used for idea analysis and chat">
           <select
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            className="input-field max-w-[200px]"
-          >
-            <option value="gpt-4o">GPT-4o (Recommended)</option>
-            <option value="claude-3.7">Claude 3.7 Sonnet</option>
-            <option value="gpt-4-turbo">GPT-4 Turbo</option>
-          </select>
+  value={model}
+  onChange={(e) => setModel(e.target.value)}
+  className="input-field max-w-[200px]"
+>
+  <option value="gemini-2.5-flash">Gemini 2.5 Flash (Active)</option>
+  <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+</select>
         </Row>
         <Row label="Auto-save Ideas" desc="Automatically save every generated plan">
           <Toggle value={autoSave} onChange={setAutoSave} />

@@ -1,8 +1,17 @@
-const express = require('express');
-const router = express.Router();
-const ideaController = require('../controllers/ideaController');
+const router = require("express").Router();
+const auth = require("../middleware/authMiddleware");
+const {
+  generateIdea,
+  getIdeaById,
+  getIdeaHistory,
+  getAllIdeas,
+  deleteIdea
+} = require("../controllers/ideaController");
 
-router.post('/generate', ideaController.generateIdea);
-router.get('/:id', ideaController.getIdeaById);
+router.post("/generate", auth, generateIdea);
+router.get("/", auth, getAllIdeas);
+router.get("/:id", auth, getIdeaById);
+router.get("/:id/history", auth, getIdeaHistory);
+router.delete("/:id", auth, deleteIdea);
 
 module.exports = router;

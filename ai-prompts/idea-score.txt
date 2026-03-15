@@ -6,7 +6,7 @@ Return ONLY a valid JSON object:
 {
   "market_demand": 0,
   "feasibility": 0,
-  "profit_potential: 0,
+  "profit_potential": 0,
   "competition_level": 0,
   "success_probability": 0
 }

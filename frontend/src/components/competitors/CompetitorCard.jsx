@@ -13,7 +13,7 @@ export default function CompetitorCard({ competitor: c }) {
       {/* Top */}
       <div className="flex items-center gap-3 mb-4">
         <div
-          className="w-10 h-10 rounded-[10px] flex items-center justify-center text-xs font-extrabold flex-shrink-0"
+          className="w-10 h-10 rounded-[10px] flex items-center justify-center text-xs font-extrabold flex-shrink-0 overflow-hidden"
           style={{
             background: `${c.color}18`,
             border: `1px solid ${c.color}35`,
@@ -21,7 +21,8 @@ export default function CompetitorCard({ competitor: c }) {
             fontFamily: "Syne, sans-serif",
           }}
         >
-          {c.logo}
+          {/* Force maximum 2 chars, or fallback to the first letter of the name */}
+          {String(c.logo && !c.logo.includes('.png') ? c.logo : c.name).substring(0, 2).toUpperCase()}
         </div>
         <div className="overflow-hidden">
           <p className="text-[14px] font-bold text-[var(--text)] truncate" style={{ fontFamily: "Syne, sans-serif" }}>
@@ -37,27 +38,32 @@ export default function CompetitorCard({ competitor: c }) {
         </div>
       </div>
 
-      {/* Score bar */}
+      {/* Score bar FIX */}
       <div
         className="h-[3px] rounded-full mb-4"
         style={{ background: "rgba(255,255,255,0.06)" }}
       >
         <div
           className="h-full rounded-full transition-all duration-1000"
-          style={{ width: `${c.score}%`, background: `linear-gradient(90deg, ${c.color}, ${c.color}60)` }}
+          style={{ 
+            // Multiply by 10 if the score is out of 10
+            width: `${c.score <= 10 ? c.score * 10 : c.score}%`, 
+            background: `linear-gradient(90deg, ${c.color}, ${c.color}60)` 
+          }}
         />
       </div>
 
-      {/* Strengths / Weaknesses */}
+      {/* Strengths / Weaknesses FIX */}
       <div className="grid grid-cols-2 gap-3">
         <div>
           <p className="text-[10px] font-semibold text-[var(--success)] uppercase tracking-widest mb-2">
             Strengths
           </p>
-          {Array.isArray(c?.strengths) && c.strengths.map((s) => (
-            <div key={s} className="flex items-start gap-1 mb-1">
+          {/* Handle both Arrays and Strings from AI */}
+          {(Array.isArray(c?.strengths) ? c.strengths : (typeof c?.strengths === 'string' ? c.strengths.split(',') : [])).map((s, i) => (
+            <div key={i} className="flex items-start gap-1 mb-1">
               <span className="text-[var(--success)] text-sm leading-none mt-0.5">+</span>
-              <span className="text-[11px] text-[var(--text)] leading-snug">{s}</span>
+              <span className="text-[11px] text-[var(--text)] leading-snug">{s.trim()}</span>
             </div>
           ))}
         </div>
@@ -65,10 +71,10 @@ export default function CompetitorCard({ competitor: c }) {
           <p className="text-[10px] font-semibold text-[#EF4444] uppercase tracking-widest mb-2">
             Weaknesses
           </p>
-          {Array.isArray(c?.weaknesses) && c.weaknesses.map((w) => (
-            <div key={w} className="flex items-start gap-1 mb-1">
+          {(Array.isArray(c?.weaknesses) ? c.weaknesses : (typeof c?.weaknesses === 'string' ? c.weaknesses.split(',') : [])).map((w, i) => (
+            <div key={i} className="flex items-start gap-1 mb-1">
               <span className="text-[#EF4444] text-sm leading-none mt-0.5">−</span>
-              <span className="text-[11px] text-[var(--text)] leading-snug">{w}</span>
+              <span className="text-[11px] text-[var(--text)] leading-snug">{w.trim()}</span>
             </div>
           ))}
         </div>

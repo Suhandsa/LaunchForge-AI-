@@ -116,7 +116,7 @@ export default function ChatBox({ ideaContext = "Your Startup Idea", ideaId = nu
           <strong className="text-[#A5B4FC]">{ideaContext}</strong>
         </span>
         <span className="ml-auto text-[12px] text-[var(--muted)] flex items-center gap-1">
-          <Bot size={12} /> Gemini Pro
+          <Bot size={12} /> Gemini 2.5 Flash Active
         </span>
       </div>
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useIdea } from "../../hooks/useIdea";
+import { useNavigate } from "react-router-dom";
 import { ideaService } from "../../services/ideaService";
 import { ErrorBoundary } from "../../components/common/ErrorBoundary";
 import IdeaForm from "../../components/idea/IdeaForm";
@@ -20,6 +21,7 @@ import Loader from "../../components/common/Loader";
 export default function Dashboard() {
   const { user } = useAuth();
   const { setIdea } = useIdea();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [generated, setGenerated] = useState(false);
@@ -27,6 +29,7 @@ export default function Dashboard() {
   const [ideaId, setIdeaId] = useState(null);
   const [ideaText, setIdeaText] = useState(null);
   const [error, setError] = useState(null);
+  const [ideaCount, setIdeaCount] = useState(0);
 
   const handleGenerate = async (prompt) => {
     setLoading(true);
@@ -53,6 +56,7 @@ export default function Dashboard() {
         idea_text: prompt,
         generated_plan: result.generated_plan,
       });
+      setIdeaCount(prev => prev + 1);
     } catch (err) {
       console.error("❌ Generation Error:", err);
       const errorMsg = err?.error || err?.message || "Failed to generate plan";
@@ -67,11 +71,18 @@ export default function Dashboard() {
   const firstName = user?.name?.split(" ")[0] || "Founder";
 
   const STATS = [
-    { label: "Ideas Generated", value: "∞", change: "Keep building", color: "#6366F1" },
-    { label: "AI Power", value: "✨", change: "Gemini Pro", color: "#22D3EE" },
-    { label: "Pitch Decks", value: "📊", change: "Export ready", color: "#10B981" },
-    { label: "AI Chat", value: "💬", change: "Co-founder", color: "#F59E0B" },
+    { label: "Ideas Generated", value: ideaCount, change: "Total startups planned", color: "#6366F1", path: null },
+    { label: "AI Engine", value: "Gemini", change: "2.5 Flash Active", color: "#22D3EE", path: null },
+    { label: "Pitch Decks", value: "PPTX", change: "Click to generate", color: "#10B981", path: "/pitch" },
+    { label: "AI Chat", value: "Live", change: "Talk to Co-founder", color: "#F59E0B", path: "/chat" },
   ];
+  useEffect(() => {
+    ideaService.getAllIdeas()
+      .then(data => {
+        if (data) setIdeaCount(data.length);
+      })
+      .catch(err => console.error("Failed to fetch ideas for stats", err));
+  }, []);
 
   return (
     <div>
@@ -85,10 +96,14 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Stats bar */}
+      {/* Stats bar - Now Clickable! */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
-        {STATS.map(({ label, value, change, color }) => (
-          <div key={label} className="glass-card hover-lift p-5">
+        {STATS.map(({ label, value, change, color, path }) => (
+          <div 
+            key={label} 
+            onClick={() => path && navigate(path)}
+            className={`glass-card p-5 ${path ? "hover-lift cursor-pointer" : ""}`}
+          >
             <p className="text-[12px] text-[var(--muted)] mb-2">{label}</p>
             <p className="text-[26px] font-extrabold leading-none mb-1.5"
                style={{ color, fontFamily: "Syne, sans-serif" }}>
